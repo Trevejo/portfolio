@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 — Trevejo">
+  <div class="not-found-container">
+    <p class="not-found-code">404 ¯\_(ツ)_/¯</p>
+    <a href="/" class="underline-link">Back to home</a>
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/typo" as *;
+
+  .not-found-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $l;
+    color: var(--textColor);
+  }
+
+  .not-found-code {
+    font-family: "Roboto Mono", monospace;
+    font-size: 96px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+    text-align: center;
+  }
+
+  .underline-link {
+    @extend %underline;
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+  }
+</style>

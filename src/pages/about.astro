@@ -1,0 +1,261 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DesktopLayout from "../layouts/DesktopLayout.astro";
+import MobileLayout from "../layouts/MobileLayout.astro";
+import { findRouteByPath } from "../constants/routes";
+import socials from "../data/socials.json";
+
+const currentPath = Astro.url.pathname;
+const route = findRouteByPath(currentPath);
+const pageName = route ?? "About";
+const pageId = "04";
+
+const list = socials as Array<{ label: string; link: string }>;
+---
+
+<BaseLayout
+  title={`${pageName} — Trevejo`}
+  description="About Murilo Trevejo."
+>
+  <DesktopLayout
+    currentPath={currentPath}
+    pageName={pageName}
+    pageId={pageId}
+  >
+    <div class="about-container" data-fade-in>
+      <section class="about-hero">
+        <h1>About</h1>
+        <p class="about-tagline">
+          Full-stack developer. Curious by default.
+        </p>
+      </section>
+
+      <section class="about-bio">
+        <h2>Who</h2>
+        <p>
+          Hi — I'm Murilo Trevejo. I build software that balances craft with
+          pragmatism. <!-- TODO: replace with your real bio -->
+        </p>
+      </section>
+
+      <section class="about-skills">
+        <h2>Stack</h2>
+        <ul class="skill-list">
+          <li>TypeScript, JavaScript</li>
+          <li>React, Astro, Svelte</li>
+          <li>Node, Bun, Deno</li>
+          <li>PostgreSQL, SQLite, MongoDB</li>
+          <li>SCSS, Tailwind, design systems</li>
+          <li>Docker, CI/CD, observability</li>
+        </ul>
+      </section>
+
+      <section class="about-experience">
+        <h2>What I've built</h2>
+        <p>
+          See the <a href="/work" class="underline-link">Work</a> page for
+          project highlights, and the <a href="/blog" class="underline-link"
+            >Blog</a
+          > for what I've been thinking about.
+        </p>
+      </section>
+
+      <section class="about-contact">
+        <h2>Get in touch</h2>
+        <p>
+          Open to interesting work. Email: <a
+            href="mailto:murilotrevejo12@gmail.com"
+            class="underline-link">murilotrevejo12@gmail.com</a
+          >.
+        </p>
+        <ul class="social-links">
+          {
+            list.map((s) => (
+              <li>
+                <a
+                  href={s.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-link"
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </DesktopLayout>
+
+  <MobileLayout title={pageName}>
+    <div class="about-container" data-fade-in>
+      <section class="about-hero">
+        <h1>About</h1>
+        <p class="about-tagline">
+          Full-stack developer. Curious by default.
+        </p>
+      </section>
+
+      <section class="about-bio">
+        <h2>Who</h2>
+        <p>
+          Hi — I'm Murilo Trevejo. I build software that balances craft with
+          pragmatism.
+        </p>
+      </section>
+
+      <section class="about-skills">
+        <h2>Stack</h2>
+        <ul class="skill-list">
+          <li>TypeScript, JavaScript</li>
+          <li>React, Astro, Svelte</li>
+          <li>Node, Bun, Deno</li>
+          <li>PostgreSQL, SQLite, MongoDB</li>
+          <li>SCSS, Tailwind, design systems</li>
+          <li>Docker, CI/CD, observability</li>
+        </ul>
+      </section>
+
+      <section class="about-experience">
+        <h2>What I've built</h2>
+        <p>
+          See the <a href="/work" class="underline-link">Work</a> page for
+          project highlights, and the <a href="/blog" class="underline-link"
+            >Blog</a
+          > for what I've been thinking about.
+        </p>
+      </section>
+
+      <section class="about-contact">
+        <h2>Get in touch</h2>
+        <p>
+          Open to interesting work. Email: <a
+            href="mailto:murilotrevejo12@gmail.com"
+            class="underline-link">murilotrevejo12@gmail.com</a
+          >.
+        </p>
+        <ul class="social-links">
+          {
+            list.map((s) => (
+              <li>
+                <a
+                  href={s.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-link"
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </MobileLayout>
+</BaseLayout>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/typo" as *;
+  @use "../styles/mixins" as *;
+
+  .about-container {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+
+    section + section {
+      margin-top: 1.6em;
+    }
+  }
+
+  .about-hero {
+    h1 {
+      font-size: $fontXL;
+      font-weight: 700;
+      line-height: 150%;
+      color: var(--textColor);
+      margin: 0 0 0.4em;
+    }
+
+    .about-tagline {
+      font-size: $fontM;
+      line-height: 150%;
+      color: var(--textColor);
+      margin: 0;
+      opacity: 0.8;
+    }
+  }
+
+  .about-bio,
+  .about-skills,
+  .about-experience,
+  .about-contact {
+    h2 {
+      font-size: $fontL;
+      font-weight: 600;
+      line-height: 150%;
+      color: var(--textColor);
+      margin: 0.4em 0 $s;
+    }
+
+    p {
+      font-size: $fontM;
+      line-height: 150%;
+      color: var(--textColor);
+    }
+  }
+
+  .skill-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $xs 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      font-size: $fontS;
+      line-height: 150%;
+      color: var(--textColor);
+      border-left: 1px solid var(--black);
+      padding-left: $s;
+      margin: 0;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $m;
+    list-style: none;
+    margin: $s 0 0;
+    padding: 0;
+  }
+
+  .social-link {
+    @extend %underlineS;
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+  }
+
+  .underline-link {
+    @extend %underline;
+    color: var(--textColor);
+  }
+
+  @include mobile {
+    .about-hero h1 {
+      font-size: $fontL;
+    }
+
+    .skill-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
