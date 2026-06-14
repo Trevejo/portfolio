@@ -1,0 +1,50 @@
+@use "tokens" as *;
+@use "typo";
+@use "reset";
+@use "mixins" as *;
+
+:root[data-theme="light"] {
+  --background: #e3e3e3;
+  --black: #1d1d1d;
+  --white: #e3e3e3;
+  --gray: #747474;
+  --accent: #e08c8c;
+  --textColor: #000000;
+  --textColorInverted: #e3e3e3;
+  --codeColor: #2a2c2d;
+  --codeBackground: #f0f0f0;
+  --codeBorder: 1px solid rgba(0, 0, 0, 0.2);
+  --workCircleDiameter: #{$workCircleDiameter};
+}
+
+:root[data-theme="dark"] {
+  --background: #1d1d1d;
+  --black: #e3e3e3;
+  --white: #1d1d1d;
+  --gray: #747474;
+  --accent: #00777f;
+  --textColor: #e3e3e3;
+  --textColorInverted: #000000;
+  --codeColor: #e6e6e6;
+  --codeBackground: #2a2c2d;
+  --codeBorder: 1px solid rgba(255, 255, 255, 0.2);
+  --workCircleDiameter: #{$workCircleDiameter};
+}
+
+@include modal-fullscreen {
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
+    --workCircleDiameter: #{$workCircleDiameterMobile};
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--textColor);
+  font: 16px/150% Karla, sans-serif;
+}
+
+* {
+  color: inherit;
+}
