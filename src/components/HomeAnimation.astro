@@ -1,0 +1,166 @@
+---
+---
+<div class="home-animation" data-home-animation>
+  <div class="box-iso">
+    <div class="box-face top">
+      <div class="door door-left" data-door-left></div>
+      <div class="door door-right" data-door-right></div>
+    </div>
+    <div class="box-face front"></div>
+    <div class="box-face side"></div>
+  </div>
+  <div class="word word-hello" data-word-hello>
+    <span class="rep rep-1">Hello</span>
+    <span class="rep rep-2">Hello</span>
+    <span class="rep rep-3">Hello</span>
+  </div>
+  <div class="word word-there" data-word-there>
+    <span class="rep rep-1">there</span>
+    <span class="rep rep-2">there</span>
+    <span class="rep rep-3">there</span>
+  </div>
+</div>
+
+<script>
+  import runHomeAnimation from "../scripts/homeAnimation";
+  runHomeAnimation();
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  $skewX: -45deg;
+  $boxWidth: 320px;
+  $topFaceHeight: 35px;
+  $bottomFaceHeight: 25px;
+  $addedWidth: $topFaceHeight;
+
+  .home-animation {
+    position: relative;
+    width: $boxWidth;
+    height: 200px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .box-iso {
+    position: relative;
+    width: $boxWidth;
+  }
+
+  .box-face {
+    position: absolute;
+  }
+
+  .box-face.top {
+    width: $boxWidth;
+    height: $topFaceHeight;
+    transform: skewX($skewX);
+    background: var(--background);
+    border-top: 1px solid var(--black);
+    border-left: 1px solid var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: 0 20px;
+  }
+
+  .box-face.front {
+    top: $topFaceHeight;
+    left: calc($addedWidth / -2);
+    width: calc(#{$boxWidth} + 1px);
+    height: $bottomFaceHeight;
+    background: var(--black);
+    border-right: 1px solid var(--black);
+  }
+
+  .box-face.side {
+    width: $addedWidth;
+    height: $bottomFaceHeight;
+    background: var(--black);
+    right: calc($addedWidth / -2);
+    top: 0;
+    transform: skewY(135deg);
+    border-left: 1px solid var(--black);
+  }
+
+  .door {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+  }
+
+  .door-left {
+    background: var(--accent);
+  }
+
+  .door-right {
+    background: var(--accent-secondary);
+  }
+
+  .word {
+    position: absolute;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--white);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    transform: translateY(60px);
+    font-family: "Karla", sans-serif;
+    line-height: 1;
+  }
+
+  .word-hello {
+    top: 100px;
+    left: 20px;
+  }
+
+  .word-there {
+    top: 100px;
+    right: 20px;
+  }
+
+  .rep {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  .rep-1 {
+    left: 0;
+    top: 0;
+    opacity: 1;
+  }
+
+  .rep-2 {
+    left: 5px;
+    top: 5px;
+    opacity: 0.2;
+  }
+
+  .rep-3 {
+    left: 10px;
+    top: 10px;
+    opacity: 0.05;
+  }
+
+  @include mobile {
+    .home-animation {
+      width: 280px;
+    }
+
+    .word {
+      font-size: 48px;
+    }
+
+    .word-hello {
+      top: 90px;
+      left: 10px;
+    }
+
+    .word-there {
+      top: 90px;
+      right: 10px;
+    }
+  }
+</style>

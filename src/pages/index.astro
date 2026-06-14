@@ -2,29 +2,132 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DesktopLayout from "../layouts/DesktopLayout.astro";
 import MobileLayout from "../layouts/MobileLayout.astro";
+import HomeAnimation from "../components/HomeAnimation.astro";
+import { findRouteByPath } from "../constants/routes";
 
-const pageName = "Home";
-const pageId = "01";
 const currentPath = Astro.url.pathname;
+const route = findRouteByPath(currentPath);
+const pageName = route ?? "Home";
+const pageId = "01";
 ---
 
-<BaseLayout title="Trevejo">
+<BaseLayout title="Trevejo" description="Portfolio of Murilo Trevejo.">
   <DesktopLayout currentPath={currentPath} pageName={pageName} pageId={pageId}>
-    <div class="card" data-fade-in>Theme + layout ok (desktop).</div>
+    <div class="home-container" data-fade-in>
+      <HomeAnimation />
+      <div class="intro-card">
+        <h1>Murilo Trevejo</h1>
+        <p>
+          Full-stack developer building thoughtful software. Currently
+          crafting <a href="/work" class="underline-link">projects</a>,
+          writing about code in the
+          <a href="/blog" class="underline-link">blog</a>, and shipping things
+          that matter.
+        </p>
+        <p class="contact">
+          Get in touch: <a
+            href="mailto:murilotrevejo12@gmail.com"
+            class="underline-link">murilotrevejo12@gmail.com</a
+          >
+        </p>
+      </div>
+    </div>
   </DesktopLayout>
   <MobileLayout title={pageName}>
-    <div class="card" data-fade-in>Theme + layout ok (mobile).</div>
+    <div class="home-container" data-fade-in>
+      <HomeAnimation />
+      <div class="intro-card">
+        <h1>Murilo Trevejo</h1>
+        <p>
+          Full-stack developer. <a href="/work" class="underline-link">Work</a
+          >, <a href="/blog" class="underline-link">blog</a>, and contact below.
+        </p>
+        <p class="contact">
+          <a
+            href="mailto:murilotrevejo12@gmail.com"
+            class="underline-link">murilotrevejo12@gmail.com</a
+          >
+        </p>
+      </div>
+    </div>
   </MobileLayout>
 </BaseLayout>
 
 <style lang="scss">
   @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
 
-  .card {
-    padding: $l;
-    border: 1px solid var(--black);
-    text-align: center;
-    font-size: $fontM;
-    line-height: 150%;
+  .home-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .intro-card {
+    max-width: 480px;
+    margin-top: 5vh;
+    padding: 0 $s;
+    text-align: left;
+
+    h1 {
+      font-size: $fontXL;
+      line-height: 150%;
+      font-weight: 700;
+      color: var(--textColor);
+    }
+
+    p {
+      font-size: $fontM;
+      line-height: 150%;
+      margin-top: $s;
+      color: var(--textColor);
+    }
+
+    .contact {
+      opacity: 0.75;
+    }
+
+    .underline-link {
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      position: relative;
+
+      &:after {
+        content: "";
+        height: 0;
+        transition: all 250ms ease-out;
+        display: block;
+        position: absolute;
+        padding-left: 4px;
+        padding-right: 4px;
+        width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -1px;
+        z-index: -1;
+        opacity: 0;
+      }
+
+      &:hover {
+        &:after {
+          background-color: var(--accent);
+          height: calc(100% + 1px);
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  @include mobile {
+    .intro-card {
+      max-width: 100%;
+
+      h1 {
+        font-size: $fontL;
+      }
+    }
   }
 </style>
