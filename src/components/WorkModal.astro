@@ -1,0 +1,241 @@
+---
+import type { Project } from "../types/work";
+import TechChip from "./TechChip.astro";
+import WorkModalTime from "./WorkModalTime.astro";
+
+interface Props {
+  id: string;
+  data: Project;
+}
+const { id, data } = Astro.props;
+---
+
+<div
+  class="work-modal"
+  data-modal-id={id}
+  data-modal-open="false"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby={`modal-title-${id}`}
+>
+  <div class="backdrop" data-modal-backdrop></div>
+  <div class="modal-container">
+    <div class="modal-inner">
+      <button
+        class="modal-close"
+        type="button"
+        data-modal-close
+        aria-label="Close"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="11"></circle>
+          <line x1="8" y1="8" x2="16" y2="16"></line>
+          <line x1="16" y1="8" x2="8" y2="16"></line>
+        </svg>
+      </button>
+      <div class="modal-body">
+        <div class="modal-content">
+          <h2 class="project-title" id={`modal-title-${id}`}>{data.title}</h2>
+          <span class="project-role">{data.role}</span>
+          <div class="project-description" set:html={data.description} />
+          <div class="project-tech">
+            {data.techStack.map((t) => <TechChip name={t} />)}
+          </div>
+          <a
+            class="project-link"
+            href={data.link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {data.link.label}
+          </a>
+        </div>
+        <div class="modal-aside">
+          <WorkModalTime periode={data.periode} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  $duration: 350ms;
+  $easing: cubic-bezier(0.45, 0, 0.55, 1);
+
+  .work-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color $duration $easing;
+  }
+
+  .modal-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $modalWidthDesktop;
+    height: $modalHeightDesktop;
+    background-color: var(--background);
+    border: 1px solid var(--black);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    transition: opacity $duration $easing, transform $duration $easing;
+
+    @include modal-fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  }
+
+  .work-modal[data-modal-open="true"] {
+    pointer-events: auto;
+
+    .backdrop {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-container {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .modal-inner {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: $s;
+    right: $s;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--textColor);
+    z-index: 2;
+    line-height: 0;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--accent);
+    }
+  }
+
+  .modal-body {
+    display: flex;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 40px;
+    gap: $m;
+
+    @include modal-fullscreen {
+      flex-direction: column;
+      padding: $s;
+      overflow-y: auto;
+    }
+  }
+
+  .modal-content {
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+    gap: $s;
+    min-width: 0;
+
+    @include modal-fullscreen {
+      flex: 0 0 auto;
+    }
+  }
+
+  .modal-aside {
+    flex: 0 0 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include modal-fullscreen {
+      flex: 0 0 auto;
+      margin-top: $m;
+    }
+  }
+
+  .project-title {
+    font-size: $fontXL;
+    line-height: 120%;
+    font-weight: 700;
+    color: var(--textColor);
+    margin: 0;
+    padding-right: 40px;
+  }
+
+  .project-role {
+    display: inline-block;
+    padding: $xxs $sm;
+    background-color: var(--black);
+    color: var(--background);
+    font-size: $fontS;
+    width: fit-content;
+  }
+
+  .project-description {
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+    max-width: 100%;
+  }
+
+  .project-description :global(p) {
+    margin: 0;
+  }
+
+  .project-description :global(p + p) {
+    margin-top: $s;
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sm;
+    margin-top: $xs;
+  }
+
+  .project-link {
+    display: inline-block;
+    margin-top: auto;
+    padding: $xxs $sm;
+    background-color: var(--accent);
+    color: var(--textColor);
+    font-size: $fontS;
+    text-decoration: none;
+    width: fit-content;
+
+    &:hover,
+    &:focus-visible {
+      filter: brightness(1.05);
+    }
+  }
+</style>

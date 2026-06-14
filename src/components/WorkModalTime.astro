@@ -1,0 +1,159 @@
+---
+interface Props {
+  periode: { start: number[]; end: number[] };
+}
+const { periode } = Astro.props;
+
+const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const startMonth = MONTH_LABELS[periode.start[0] - 1] ?? "Jan";
+const startYear = periode.start[1];
+const endMonth = MONTH_LABELS[periode.end[0] - 1] ?? "Jan";
+const endYear = periode.end[1];
+---
+
+<div
+  class="work-modal-time"
+  data-work-modal-time
+  data-start-month={periode.start[0]}
+  data-start-year={periode.start[1]}
+  data-end-month={periode.end[0]}
+  data-end-year={periode.end[1]}
+>
+  <div class="time-stage">
+    <div class="time-start">
+      <span class="time-month" data-time-month-start>{startMonth}</span>
+      <span class="time-year" data-time-year-start>{startYear}</span>
+    </div>
+    <div class="time-tube">
+      <div class="moving-circle"></div>
+    </div>
+    <div class="dashed-line"></div>
+    <div class="time-end">
+      <span class="time-month" data-time-month-end>{startMonth}</span>
+      <span class="time-year" data-time-year-end>{startYear}</span>
+    </div>
+  </div>
+  <p class="time-summary">
+    From {startMonth} {startYear} to {endMonth} {endYear}
+  </p>
+</div>
+
+<script>
+  import "../scripts/workModalTime";
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  $easing: cubic-bezier(0.5, 0, 0.5, 1);
+
+  .work-modal-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $s;
+    width: 100%;
+  }
+
+  .time-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $xs;
+  }
+
+  .time-start,
+  .time-end {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: $fontS;
+    font-family: "Roboto Mono", monospace;
+    color: var(--textColor);
+    min-height: 36px;
+    justify-content: center;
+  }
+
+  .time-month {
+    font-weight: 700;
+  }
+
+  .time-year {
+    opacity: 0.7;
+  }
+
+  .time-tube {
+    position: relative;
+    width: var(--workCircleDiameter);
+    height: var(--workCircleDiameter);
+    border-radius: 50%;
+    background: var(--black);
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 1250ms $easing;
+  }
+
+  .moving-circle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    background: var(--background);
+    transform: translate(-50%, -50%);
+    transition: top 1250ms $easing;
+  }
+
+  .work-modal-time[data-state="visible"] .time-tube {
+    transform: scale(1);
+  }
+
+  .work-modal-time[data-state="visible"] .moving-circle {
+    top: 100%;
+  }
+
+  .dashed-line {
+    width: 0;
+    height: $m;
+    border-left: 1px dashed var(--black);
+  }
+
+  .time-summary {
+    font-size: $fontS;
+    color: var(--textColor);
+    opacity: 0.7;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .time-tube,
+    .moving-circle {
+      transition: none;
+    }
+  }
+
+  @include modal-fullscreen {
+    .time-stage {
+      gap: $xxs;
+    }
+    .dashed-line {
+      height: $s;
+    }
+  }
+</style>

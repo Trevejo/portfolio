@@ -47,6 +47,10 @@ body {
   font: 16px/150% Karla, sans-serif;
 }
 
+body.modalLock {
+  overflow: hidden;
+}
+
 * {
   color: inherit;
 }

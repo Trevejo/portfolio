@@ -1,0 +1,130 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DesktopLayout from "../layouts/DesktopLayout.astro";
+import MobileLayout from "../layouts/MobileLayout.astro";
+import ButtonCube from "../components/ButtonCube.astro";
+import WorkModal from "../components/WorkModal.astro";
+import workData from "../data/work.json";
+import type { Project } from "../types/work";
+import { findRouteByPath } from "../constants/routes";
+
+const currentPath = Astro.url.pathname;
+const route = findRouteByPath(currentPath);
+const pageName = route ?? "Work";
+const pageId = "02";
+
+const entries = Object.entries(workData) as [string, Project][];
+---
+
+<BaseLayout
+  title={`${pageName} — Trevejo`}
+  description="Selected projects by Murilo Trevejo."
+>
+  <DesktopLayout
+    currentPath={currentPath}
+    pageName={pageName}
+    pageId={pageId}
+  >
+    <div class="work-container" data-fade-in>
+      <h1 class="work-title">Work</h1>
+      <p class="work-intro">Selected projects. Click a tile for details.</p>
+      <div class="work-grid">
+        {
+          entries.map(([id, project]) => (
+            <div class="work-cell">
+              <ButtonCube id={id} label={project.title} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </DesktopLayout>
+
+  <MobileLayout title={pageName}>
+    <div class="work-container" data-fade-in>
+      <h1 class="work-title">Work</h1>
+      <p class="work-intro">Tap a tile for details.</p>
+      <div class="work-grid">
+        {
+          entries.map(([id, project]) => (
+            <div class="work-cell">
+              <ButtonCube id={id} label={project.title} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </MobileLayout>
+
+  {entries.map(([id, project]) => <WorkModal id={id} data={project} />)}
+</BaseLayout>
+
+<script>
+  import "../scripts/workModal";
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  .work-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 $s;
+    box-sizing: border-box;
+  }
+
+  .work-title {
+    font-size: $fontXL;
+    font-weight: 700;
+    color: var(--textColor);
+    margin: 0;
+  }
+
+  .work-intro {
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+    margin-top: $s;
+    margin-bottom: $xxl;
+    text-align: center;
+    max-width: 480px;
+    opacity: 0.8;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 120px 120px;
+    width: 100%;
+    max-width: 720px;
+    place-items: center;
+  }
+
+  .work-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 900px) {
+    .work-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 80px 60px;
+    }
+  }
+
+  @include modal-fullscreen {
+    .work-grid {
+      grid-template-columns: 1fr;
+      gap: 60px;
+      max-width: 320px;
+    }
+
+    .work-title {
+      font-size: $fontL;
+    }
+  }
+</style>

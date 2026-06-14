@@ -1,0 +1,42 @@
+{
+  "project-alpha": {
+    "title": "Project Alpha",
+    "role": "Lead Developer",
+    "techStack": ["typescript", "react", "node"],
+    "description": "<!-- TODO: replace --><p>Placeholder description for Project Alpha. A modern, type-safe web application built for scale with a focus on observability and reliability.</p>",
+    "link": { "label": "View project", "url": "https://example.com" },
+    "periode": { "start": [1, 2023], "end": [12, 2024] }
+  },
+  "project-beta": {
+    "title": "Project Beta",
+    "role": "Frontend Engineer",
+    "techStack": ["astro", "svelte", "sass"],
+    "description": "<!-- TODO: replace --><p>Placeholder description for Project Beta. A content-driven marketing site with islands of interactivity and a custom design system.</p>",
+    "link": { "label": "Visit site", "url": "https://example.com" },
+    "periode": { "start": [6, 2022], "end": [5, 2023] }
+  },
+  "project-gamma": {
+    "title": "Project Gamma",
+    "role": "Backend Engineer",
+    "techStack": ["rust", "postgresql", "docker"],
+    "description": "<!-- TODO: replace --><p>Placeholder description for Project Gamma. A high-throughput data pipeline shipping millions of events per day with strict latency budgets.</p>",
+    "link": { "label": "Case study", "url": "https://example.com" },
+    "periode": { "start": [3, 2021], "end": [2, 2022] }
+  },
+  "project-delta": {
+    "title": "Project Delta",
+    "role": "Full-stack Developer",
+    "techStack": ["python", "vue", "mongodb"],
+    "description": "<!-- TODO: replace --><p>Placeholder description for Project Delta. An internal tool that automated previously manual review workflows and reduced cycle time by an order of magnitude.</p>",
+    "link": { "label": "Read more", "url": "https://example.com" },
+    "periode": { "start": [9, 2020], "end": [8, 2021] }
+  },
+  "project-epsilon": {
+    "title": "Project Epsilon",
+    "role": "UI Developer",
+    "techStack": ["javascript", "react", "figma"],
+    "description": "<!-- TODO: replace --><p>Placeholder description for Project Epsilon. A design-system handoff and prototyping toolchain bridging product, design, and engineering.</p>",
+    "link": { "label": "Open project", "url": "https://example.com" },
+    "periode": { "start": [1, 2020], "end": [12, 2020] }
+  }
+}

@@ -1,0 +1,139 @@
+---
+interface Props {
+  id: string;
+  label: string;
+  size?: number;
+}
+const { id, label, size = 150 } = Astro.props;
+const sizeVar = `--cube-size: ${size}px;`;
+---
+
+<button
+  class="button-cube"
+  type="button"
+  data-cube-id={id}
+  data-cube-label={label}
+  aria-label={`Open ${label}`}
+  style={sizeVar}
+>
+  <div class="below-frame"></div>
+  <div class="triangle triangle-top"></div>
+  <div class="triangle triangle-bottom"></div>
+  <div class="above-frame">
+    <span class="cube-label">{label}</span>
+  </div>
+</button>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  $shift: 15px;
+  $duration: 200ms;
+  $easing: cubic-bezier(0.45, 0, 0.55, 1);
+
+  @keyframes wobble {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(2px, 2px);
+    }
+  }
+
+  .button-cube {
+    position: relative;
+    width: var(--cube-size);
+    height: var(--cube-size);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--textColor);
+    font-family: inherit;
+    display: inline-block;
+    overflow: visible;
+
+    &:hover,
+    &:focus-visible,
+    &:active {
+      .below-frame,
+      .triangle {
+        background-color: var(--accent);
+      }
+      .above-frame {
+        animation-play-state: paused;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .below-frame {
+    position: absolute;
+    top: $shift;
+    left: $shift;
+    width: var(--cube-size);
+    height: var(--cube-size);
+    background-color: var(--black);
+    transition: background-color $duration $easing;
+    z-index: 0;
+  }
+
+  .triangle {
+    position: absolute;
+    width: $shift;
+    height: $shift;
+    background-color: var(--black);
+    transition: background-color $duration $easing;
+    z-index: 1;
+  }
+
+  .triangle-top {
+    top: 0;
+    right: -$shift;
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+  }
+
+  .triangle-bottom {
+    bottom: -$shift;
+    left: 0;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+
+  .above-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--cube-size);
+    height: var(--cube-size);
+    background-color: var(--background);
+    border: 1px solid var(--black);
+    padding: 1px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    animation: wobble 1200ms ease-in-out infinite;
+  }
+
+  .cube-label {
+    font-family: "Roboto Mono", monospace;
+    font-size: $fontS;
+    text-align: center;
+    color: var(--textColor);
+    line-height: 1.2;
+    padding: $xs;
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .above-frame {
+      animation: none;
+    }
+  }
+</style>

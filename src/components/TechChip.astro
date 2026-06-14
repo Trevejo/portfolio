@@ -1,0 +1,46 @@
+---
+import { getToolIcon } from "../data/tools";
+
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+const icon = getToolIcon(name);
+const bg = `background-color: ${icon.color};`;
+---
+
+<span class="tech-chip" title={name}>
+  <span class="tech-icon" style={bg}>{icon.glyph}</span>
+  <span class="tech-name">{name}</span>
+</span>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+
+  .tech-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $fontS;
+    color: var(--textColor);
+    line-height: 1;
+  }
+
+  .tech-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: "Roboto Mono", monospace;
+    flex-shrink: 0;
+  }
+
+  .tech-name {
+    text-transform: lowercase;
+  }
+</style>

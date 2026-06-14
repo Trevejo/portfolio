@@ -1,0 +1,2 @@
+export const WORK_MODAL_PADDING = 40;
+export const WORK_MODAL_TIME_DURATION = 1250;

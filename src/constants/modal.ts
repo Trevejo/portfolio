@@ -1,0 +1,3 @@
+export const MODAL_OPEN_DURATION = 350;
+export const MODAL_CLOSE_DURATION = 350;
+export const BACKDROP_FADE_DURATION = 350;
