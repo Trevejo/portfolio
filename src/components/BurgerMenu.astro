@@ -1,0 +1,156 @@
+---
+import { ROUTES, findRouteByPath } from "../constants/routes";
+
+const currentName = findRouteByPath(Astro.url.pathname);
+---
+
+<button
+  class="burger-icon"
+  id="burger-icon"
+  type="button"
+  aria-label="Menu"
+  aria-expanded="false"
+>
+  <span class="bar bar-top"></span>
+  <span class="bar bar-mid"></span>
+  <span class="bar bar-bot"></span>
+</button>
+<aside class="burger-menu" id="burger-menu" aria-hidden="true">
+  <nav>
+    <ul class="burger-list">
+      {
+        ROUTES.map((r) => (
+          <li class="burger-item">
+            <a
+              href={r.link}
+              data-route={r.id}
+              class:list={["burger-link", { current: r.name === currentName }]}
+            >
+              {r.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</aside>
+
+<script>
+  const btn = document.getElementById("burger-icon");
+  const menu = document.getElementById("burger-menu");
+
+  function setOpen(open: boolean): void {
+    document.body.classList.toggle("burgerMenuOpen", open);
+    if (btn) btn.setAttribute("aria-expanded", String(open));
+    if (menu) menu.setAttribute("aria-hidden", String(!open));
+  }
+
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const isOpen = document.body.classList.contains("burgerMenuOpen");
+      setOpen(!isOpen);
+    });
+  }
+
+  if (menu) {
+    menu.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => setOpen(false));
+    });
+  }
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+
+  .burger-icon {
+    --burger-duration: 250ms;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 58px;
+    height: $burgerMenuHeight;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--textColor);
+  }
+
+  .bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--black);
+    transition: transform var(--burger-duration) ease-out,
+      opacity var(--burger-duration) ease-out;
+  }
+
+  :global(body.burgerMenuOpen) .bar-top {
+    transform: rotate(26deg) scaleX(0.7);
+  }
+
+  :global(body.burgerMenuOpen) .bar-bot {
+    transform: rotate(-26deg) scaleX(0.7);
+  }
+
+  :global(body.burgerMenuOpen) .bar-mid {
+    opacity: 0;
+  }
+
+  .burger-menu {
+    --burger-duration: 250ms;
+    position: fixed;
+    inset: 0;
+    background: var(--background);
+    border-left: 1px solid var(--black);
+    transform: translateX(100%);
+    transition: transform var(--burger-duration) ease-out;
+    z-index: 30;
+    color: var(--textColor);
+  }
+
+  :global(body.burgerMenuOpen) .burger-menu {
+    transform: translateX(0);
+  }
+
+  .burger-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .burger-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .burger-link {
+    display: block;
+    padding: $s $m;
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+    text-decoration: none;
+  }
+
+  .burger-link.current {
+    background: var(--accent);
+    width: 150px;
+  }
+
+  nav {
+    padding-top: $burgerMenuHeight;
+  }
+
+  @media (min-width: 1101px) {
+    .burger-icon,
+    .burger-menu {
+      display: none;
+    }
+  }
+</style>

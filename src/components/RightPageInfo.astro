@@ -1,0 +1,65 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+interface Props {
+  text: string;
+  id: string;
+}
+const { text, id } = Astro.props;
+---
+
+<aside class="right-page-info">
+  <div class="rpi-theme">
+    <ThemeToggle />
+  </div>
+  <div class="rpi-bar"></div>
+  <div class="rpi-rotated">
+    <span class="rpi-rotated-text">{id} / {text}</span>
+  </div>
+</aside>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/mixins" as *;
+
+  .right-page-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: $s;
+    color: var(--textColor);
+  }
+
+  .rpi-theme {
+    margin-bottom: $s;
+  }
+
+  .rpi-bar {
+    width: 50px;
+    height: 1px;
+    background: var(--gray);
+    margin-bottom: $s;
+  }
+
+  .rpi-rotated {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rpi-rotated-text {
+    transform: rotate(-90deg);
+    font-size: $fontS;
+    line-height: 150%;
+    white-space: nowrap;
+    color: var(--textColor);
+  }
+
+  @include mobile {
+    .right-page-info {
+      display: none;
+    }
+  }
+</style>

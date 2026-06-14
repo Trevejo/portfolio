@@ -1,50 +1,30 @@
 ---
-import "../styles/global.scss";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DesktopLayout from "../layouts/DesktopLayout.astro";
+import MobileLayout from "../layouts/MobileLayout.astro";
+
+const pageName = "Home";
+const pageId = "01";
+const currentPath = Astro.url.pathname;
 ---
 
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trevejo</title>
-  </head>
-  <body>
-    <div class="layout">
-      <div class="theme-slot">
-        <ThemeToggle />
-      </div>
-      <div class="placeholder">
-        <h1>Trevejo</h1>
-        <p>Theme foundation ok.</p>
-      </div>
-    </div>
-  </body>
-</html>
+<BaseLayout title="Trevejo">
+  <DesktopLayout currentPath={currentPath} pageName={pageName} pageId={pageId}>
+    <div class="card" data-fade-in>Theme + layout ok (desktop).</div>
+  </DesktopLayout>
+  <MobileLayout title={pageName}>
+    <div class="card" data-fade-in>Theme + layout ok (mobile).</div>
+  </MobileLayout>
+</BaseLayout>
 
 <style lang="scss">
   @use "../styles/tokens" as *;
 
-  .layout {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .theme-slot {
-    position: absolute;
-    top: $s;
-    right: $s;
-    z-index: 10;
-  }
-
-  .placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: $s;
+  .card {
+    padding: $l;
+    border: 1px solid var(--black);
+    text-align: center;
+    font-size: $fontM;
+    line-height: 150%;
   }
 </style>

@@ -1,0 +1,71 @@
+---
+import socials from "../data/socials.json";
+
+const list = socials as Array<{ label: string; link: string }>;
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    {
+      list.map((s, i) => (
+        <div class="footer-item">
+          <a
+            class="footer-link"
+            href={s.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {s.label}
+          </a>
+          {i < list.length - 1 && <span class="footer-sep" />}
+        </div>
+      ))
+    }
+  </div>
+</footer>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: $footerHeight;
+    background: var(--black);
+    color: var(--background);
+    z-index: 5;
+  }
+
+  .footer-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $s;
+  }
+
+  .footer-item {
+    display: flex;
+    align-items: center;
+    gap: $s;
+  }
+
+  .footer-link {
+    font-size: $fontS;
+    line-height: 150%;
+    color: var(--background);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .footer-sep {
+    display: inline-block;
+    width: 8px;
+    height: 1px;
+    background: var(--background);
+  }
+</style>

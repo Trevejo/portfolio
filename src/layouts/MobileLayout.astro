@@ -1,0 +1,45 @@
+---
+import TopBar from "../components/TopBar.astro";
+import BurgerMenu from "../components/BurgerMenu.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="mobile-layout">
+  <TopBar title={title} />
+  <BurgerMenu />
+  <main class="mobile-main">
+    <slot />
+  </main>
+  <Footer />
+</div>
+
+<script>
+  import "../scripts/pageFadeIn";
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+
+  .mobile-layout {
+    min-height: 100vh;
+    padding-top: $burgerMenuHeight;
+    padding-bottom: $footerHeight;
+    position: relative;
+  }
+
+  .mobile-main {
+    padding: $s;
+    color: var(--textColor);
+  }
+
+  @media (min-width: 1101px) {
+    .mobile-layout {
+      display: none;
+    }
+  }
+</style>
