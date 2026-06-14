@@ -1,0 +1,136 @@
+---
+interface Props {
+  years: number[];
+  initialYear: number;
+}
+
+const { years, initialYear } = Astro.props;
+---
+
+<div
+  class="year-selector-desktop"
+  data-year-selector-desktop
+  data-initial-year={initialYear}
+>
+  <div class="years-container" data-years>
+    {
+      years.map((y) => (
+        <button
+          class:list={["year-button", { active: y === initialYear }]}
+          data-year={y}
+          type="button"
+        >
+          {y}
+        </button>
+      ))
+    }
+  </div>
+  <div class="selection" data-selection></div>
+</div>
+
+<script>
+  function initDesktop(): void {
+    document
+      .querySelectorAll<HTMLElement>("[data-year-selector-desktop]")
+      .forEach((root) => {
+        const buttons = root.querySelectorAll<HTMLButtonElement>("[data-year]");
+        const selection = root.querySelector<HTMLElement>("[data-selection]");
+        const yearsContainer = root.querySelector<HTMLElement>(
+          "[data-years]",
+        );
+        if (!selection || !yearsContainer) return;
+
+        const initialYear = Number(root.dataset.initialYear);
+
+        function positionSelection(year: number): void {
+          const target = root.querySelector<HTMLButtonElement>(
+            `[data-year="${year}"]`,
+          );
+          if (!target) return;
+          const top = target.offsetTop;
+          selection!.style.top = `${top}px`;
+          buttons.forEach((b) =>
+            b.classList.toggle("active", Number(b.dataset.year) === year),
+          );
+        }
+
+        requestAnimationFrame(() => positionSelection(initialYear));
+
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const year = Number(btn.dataset.year);
+            if (!Number.isFinite(year)) return;
+            positionSelection(year);
+            document.dispatchEvent(
+              new CustomEvent("blog:yearChange", { detail: { year } }),
+            );
+          });
+        });
+      });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDesktop, { once: true });
+  } else {
+    initDesktop();
+  }
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/typo" as *;
+  @use "../styles/mixins" as *;
+
+  .year-selector-desktop {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .years-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $xxs;
+    position: relative;
+    z-index: 1;
+  }
+
+  .year-button {
+    font-family: "Roboto Mono", monospace;
+    font-size: $fontM;
+    line-height: 150%;
+    padding: $xxs $s;
+    color: var(--textColor);
+    text-align: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 90px;
+
+    &.active {
+      color: var(--background);
+    }
+  }
+
+  .selection {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 35px;
+    background: var(--accent);
+    border: 1px solid var(--black);
+    top: 0;
+    transition: top 250ms ease-out;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @include mobile {
+    .year-selector-desktop {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+interface Props {
+  years: number[];
+  initialYear: number;
+}
+
+const { years, initialYear } = Astro.props;
+const otherYears = years.filter((y) => y !== initialYear);
+---
+
+<div
+  class="year-selector-mobile"
+  data-year-selector-mobile
+  data-initial-year={initialYear}
+  data-years={JSON.stringify(years)}
+  style={`--year-count: ${years.length};`}
+>
+  <button class="current-year-button" data-toggle type="button" aria-expanded="false">
+    <span class="current-year" data-current>{initialYear}</span>
+    <span class="arrow" data-arrow>▾</span>
+  </button>
+  <ul class="other-years" data-list>
+    {
+      otherYears.map((y) => (
+        <li>
+          <button class="other-year" data-year={y} type="button">
+            {y}
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  function initMobile(): void {
+    document
+      .querySelectorAll<HTMLElement>("[data-year-selector-mobile]")
+      .forEach((root) => {
+        const years: number[] = JSON.parse(root.dataset.years || "[]");
+        const toggle = root.querySelector<HTMLButtonElement>("[data-toggle]");
+        const currentEl = root.querySelector<HTMLElement>("[data-current]");
+        const arrow = root.querySelector<HTMLElement>("[data-arrow]");
+        const list = root.querySelector<HTMLElement>("[data-list]");
+        if (!toggle || !currentEl || !arrow || !list) return;
+
+        const buttonHeight = 45;
+        const animDuration = 150;
+
+        function setOpen(open: boolean): void {
+          root!.classList.toggle("is-open", open);
+          toggle!.setAttribute("aria-expanded", String(open));
+          arrow!.textContent = open ? "▴" : "▾";
+          root!.style.height = open
+            ? `${years.length * buttonHeight}px`
+            : `${buttonHeight}px`;
+        }
+
+        function rebindOtherYears(): void {
+          list!
+            .querySelectorAll<HTMLButtonElement>("[data-year]")
+            .forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const year = Number(btn.dataset.year);
+                if (!Number.isFinite(year)) return;
+                currentEl!.textContent = String(year);
+                setOpen(false);
+                document.dispatchEvent(
+                  new CustomEvent("blog:yearChange", {
+                    detail: { year },
+                  }),
+                );
+                const li = btn.parentElement;
+                if (li) li.style.display = "none";
+              });
+            });
+        }
+
+        toggle.addEventListener("click", () => {
+          setOpen(!root.classList.contains("is-open"));
+        });
+
+        rebindOtherYears();
+        root.style.transition = `height ${animDuration}ms linear`;
+      });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMobile, { once: true });
+  } else {
+    initMobile();
+  }
+</script>
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/typo" as *;
+  @use "../styles/mixins" as *;
+
+  .year-selector-mobile {
+    width: 150px;
+    height: 45px;
+    overflow: hidden;
+    border: 1px solid var(--black);
+    position: relative;
+  }
+
+  .current-year-button {
+    width: 100%;
+    height: 45px;
+    background: var(--accent);
+    color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .current-year {
+    font-family: "Roboto Mono", monospace;
+    font-size: $fontM;
+    letter-spacing: 6px;
+  }
+
+  .arrow {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .other-years {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .other-year {
+    width: 100%;
+    height: 45px;
+    font-family: "Roboto Mono", monospace;
+    font-size: $fontM;
+    letter-spacing: 6px;
+    background: var(--background);
+    color: var(--textColor);
+    border: none;
+    cursor: pointer;
+  }
+
+  @media (min-width: 1101px) {
+    .year-selector-mobile {
+      display: none;
+    }
+  }
+</style>

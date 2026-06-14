@@ -1,0 +1,94 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  currentYear: number;
+}
+
+const { posts, currentYear } = Astro.props;
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "UTC",
+  });
+}
+
+function formatFullDate(d: Date): string {
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    timeZone: "UTC",
+  });
+}
+---
+
+{
+  posts.length === 0 ? (
+    <p class="post-list-empty">No posts for {currentYear} yet.</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li class="post-item">
+          <a href={`/blog/${post.id}`} class="post-link">
+            <span class="post-link-title">{post.data.title}</span>
+            <time
+              class="post-link-date"
+              datetime={post.data.date.toISOString()}
+              title={formatFullDate(post.data.date)}
+            >
+              {formatDate(post.data.date)}
+            </time>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style lang="scss">
+  @use "../styles/tokens" as *;
+  @use "../styles/typo" as *;
+  @use "../styles/mixins" as *;
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: $s;
+    width: 100%;
+  }
+
+  .post-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .post-link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--textColor);
+  }
+
+  .post-link-title {
+    @extend %underline;
+    color: var(--textColor);
+  }
+
+  .post-link-date {
+    @extend %fontXS;
+    opacity: 0.75;
+    color: var(--textColor);
+  }
+
+  .post-list-empty {
+    font-size: $fontM;
+    line-height: 150%;
+    color: var(--textColor);
+    opacity: 0.75;
+    margin: 0;
+  }
+</style>

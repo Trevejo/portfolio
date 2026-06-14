@@ -1,0 +1,141 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DesktopLayout from "../../layouts/DesktopLayout.astro";
+import MobileLayout from "../../layouts/MobileLayout.astro";
+import { getCollection } from "astro:content";
+import { findRouteByPath } from "../../constants/routes";
+import PostList from "../../components/PostList.astro";
+import BlogYearSelectorDesktop from "../../components/BlogYearSelectorDesktop.astro";
+import BlogYearSelectorMobile from "../../components/BlogYearSelectorMobile.astro";
+import { getYears } from "../../lib/helpers";
+
+const currentPath = Astro.url.pathname;
+const route = findRouteByPath(currentPath);
+const pageName = route ?? "Blog";
+const pageId = "03";
+
+const allPosts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const years = getYears(2024);
+const defaultYear = years[0];
+const postsByYear = new Map<number, typeof allPosts>();
+for (const post of allPosts) {
+  const y = post.data.date.getFullYear();
+  if (!postsByYear.has(y)) postsByYear.set(y, []);
+  postsByYear.get(y)!.push(post);
+}
+---
+
+<BaseLayout title="Blog — Trevejo" description="Posts and writings.">
+  <DesktopLayout
+    currentPath={currentPath}
+    pageName={pageName}
+    pageId={pageId}
+  >
+    <div class="blog-container" data-fade-in>
+      <h1 class="blog-title">Blog</h1>
+      <div class="blog-layout">
+        <div class="blog-year-col">
+          <BlogYearSelectorDesktop
+            years={years}
+            initialYear={defaultYear}
+          />
+        </div>
+        <div class="blog-content" id="blog-content">
+          <PostList
+            posts={postsByYear.get(defaultYear) ?? []}
+            currentYear={defaultYear}
+          />
+        </div>
+      </div>
+    </div>
+  </DesktopLayout>
+  <MobileLayout title="Blog">
+    <div class="blog-container" data-fade-in>
+      <h1 class="blog-title">Blog</h1>
+      <div class="blog-mobile-year">
+        <BlogYearSelectorMobile
+          years={years}
+          initialYear={defaultYear}
+        />
+      </div>
+      <div class="blog-content" id="blog-content">
+        <PostList
+          posts={postsByYear.get(defaultYear) ?? []}
+          currentYear={defaultYear}
+        />
+      </div>
+    </div>
+  </MobileLayout>
+</BaseLayout>
+
+<script>
+  import "../../scripts/blogYearSelector";
+</script>
+
+<style lang="scss">
+  @use "../../styles/tokens" as *;
+  @use "../../styles/mixins" as *;
+
+  .blog-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .blog-title {
+    font-size: $fontXL;
+    font-weight: 700;
+    color: var(--textColor);
+    margin: 0 0 $m;
+  }
+
+  .blog-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $xl;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .blog-year-col {
+    flex: 0 0 auto;
+  }
+
+  .blog-content {
+    flex: 1;
+    min-width: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  .blog-mobile-year {
+    display: none;
+  }
+
+  @include mobile {
+    .blog-layout {
+      flex-direction: column;
+      align-items: center;
+      gap: $m;
+    }
+
+    .blog-year-col {
+      display: none;
+    }
+
+    .blog-mobile-year {
+      display: flex;
+      justify-content: center;
+      margin-bottom: $m;
+      width: 100%;
+    }
+
+    .blog-title {
+      font-size: $fontL;
+    }
+  }
+</style>
