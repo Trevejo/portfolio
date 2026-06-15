@@ -55,6 +55,23 @@ function closeAllOpen(): void {
     .forEach(closeModal);
 }
 
+function trapFocus(modal: HTMLElement, e: KeyboardEvent): void {
+  if (e.key !== "Tab") return;
+  const focusables = modal.querySelectorAll<HTMLElement>(
+    'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  );
+  if (focusables.length === 0) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
 function onDocumentClick(e: MouseEvent): void {
   const target = e.target;
   if (!(target instanceof Element)) return;
@@ -80,17 +97,22 @@ function onDocumentClick(e: MouseEvent): void {
   }
 }
 
-function onKeyDown(e: KeyboardEvent): void {
+function onDocumentKeyDown(e: KeyboardEvent): void {
   if (e.key === "Escape") {
     closeAllOpen();
+    return;
   }
+  const open = document.querySelector<HTMLElement>(
+    '.work-modal[data-modal-open="true"]',
+  );
+  if (open) trapFocus(open, e);
 }
 
 function init(): void {
-  if (document.documentElement.hasAttribute("data-work-modal-init")) return;
-  document.documentElement.setAttribute("data-work-modal-init", "");
+  if ((window as unknown as Record<string, unknown>).__workModalBooted) return;
+  (window as unknown as Record<string, unknown>).__workModalBooted = true;
   document.addEventListener("click", onDocumentClick);
-  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keydown", onDocumentKeyDown);
 }
 
 if (document.readyState === "loading") {
@@ -98,5 +120,15 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+
+document.addEventListener("astro:page-load", () => {
+  document
+    .querySelectorAll<HTMLElement>('.work-modal[data-modal-open="true"]')
+    .forEach((m) => {
+      m.setAttribute("data-modal-open", "false");
+      m.setAttribute("aria-hidden", "true");
+    });
+  document.body.classList.remove("modalLock");
+});
 
 export {};

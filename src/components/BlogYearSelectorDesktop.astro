@@ -33,12 +33,15 @@ const { years, initialYear } = Astro.props;
     document
       .querySelectorAll<HTMLElement>("[data-year-selector-desktop]")
       .forEach((root) => {
+        if (root.dataset.bound === "true") return;
         const buttons = root.querySelectorAll<HTMLButtonElement>("[data-year]");
         const selection = root.querySelector<HTMLElement>("[data-selection]");
         const yearsContainer = root.querySelector<HTMLElement>(
           "[data-years]",
         );
         if (!selection || !yearsContainer) return;
+
+        root.dataset.bound = "true";
 
         const initialYear = Number(root.dataset.initialYear);
 
@@ -74,6 +77,8 @@ const { years, initialYear } = Astro.props;
   } else {
     initDesktop();
   }
+
+  document.addEventListener("astro:page-load", initDesktop);
 </script>
 
 <style lang="scss">

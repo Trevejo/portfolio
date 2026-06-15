@@ -10,7 +10,7 @@ const currentName = findRouteByPath(currentPath);
 
 <aside class="left-menu">
   <div class="left-menu-frame" id="left-menu-frame"></div>
-  <nav>
+  <nav aria-label="Primary">
     <ul class="nav-list" id="nav-list">
       {
         ROUTES.map((r) => (
@@ -31,36 +31,51 @@ const currentName = findRouteByPath(currentPath);
 </aside>
 
 <script>
-  const list = document.getElementById("nav-list");
-  const pointer = document.getElementById("nav-pointer");
+  function init(): void {
+    const list = document.getElementById("nav-list");
+    const pointer = document.getElementById("nav-pointer");
 
-  function moveToLink(target: HTMLElement): void {
-    if (!list || !pointer) return;
-    const listRect = list.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    const y = targetRect.top - listRect.top;
-    pointer.style.transform = `translateY(${y}px)`;
-  }
-
-  function initPointer(): void {
-    if (!list || !pointer) return;
-    const current = list.querySelector<HTMLElement>("a.current");
-    if (current) {
-      moveToLink(current);
-      pointer.classList.add("is-current");
-    } else {
-      pointer.classList.remove("is-current");
+    function moveToLink(target: HTMLElement): void {
+      if (!list || !pointer) return;
+      const listRect = list.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const y = targetRect.top - listRect.top;
+      pointer.style.transform = `translateY(${y}px)`;
     }
-  }
 
-  initPointer();
-  window.addEventListener("resize", initPointer);
+    function initPointer(): void {
+      if (!list || !pointer) return;
+      const current = list.querySelector<HTMLElement>("a.current");
+      if (current) {
+        moveToLink(current);
+        pointer.classList.add("is-current");
+      } else {
+        pointer.classList.remove("is-current");
+      }
+    }
 
-  if (list) {
+    if (!list || !pointer) return;
+    if (list.dataset.bound === "true") {
+      initPointer();
+      return;
+    }
+    list.dataset.bound = "true";
+
+    initPointer();
+    window.addEventListener("resize", initPointer);
+
     list.querySelectorAll<HTMLElement>("a").forEach((a) => {
       a.addEventListener("click", () => moveToLink(a));
     });
   }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+  document.addEventListener("astro:page-load", init);
 </script>
 
 <style lang="scss">

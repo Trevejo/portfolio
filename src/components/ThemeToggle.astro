@@ -20,10 +20,21 @@
 <script>
   import { toggleTheme } from "../scripts/theme";
 
-  const button = document.getElementById("theme-toggle");
-  if (button) {
+  function init(): void {
+    const button = document.getElementById("theme-toggle");
+    if (!button) return;
+    if (button.dataset.bound === "true") return;
+    button.dataset.bound = "true";
     button.addEventListener("click", () => {
       toggleTheme();
     });
   }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+  document.addEventListener("astro:page-load", init);
 </script>

@@ -75,8 +75,20 @@ function currentTheme(): Theme {
 }
 
 let activeTheme: Theme = currentTheme();
-applyTheme(activeTheme);
-setStoredTheme(activeTheme);
+
+if (!(window as unknown as Record<string, unknown>).__themeBooted) {
+  (window as unknown as Record<string, unknown>).__themeBooted = true;
+  applyTheme(activeTheme);
+  setStoredTheme(activeTheme);
+}
+
+document.addEventListener("astro:after-swap", () => {
+  document.documentElement.dataset.theme = activeTheme;
+  const vars = THEME_VARS[activeTheme];
+  for (const [key, value] of Object.entries(vars)) {
+    document.documentElement.style.setProperty(`--${key}`, value);
+  }
+});
 
 export function getCurrentTheme(): Theme {
   return activeTheme;

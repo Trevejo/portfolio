@@ -12,9 +12,9 @@ const { title } = Astro.props;
 <div class="mobile-layout">
   <TopBar title={title} />
   <BurgerMenu />
-  <main class="mobile-main">
+  <div class="mobile-main">
     <slot />
-  </main>
+  </div>
   <Footer />
 </div>
 

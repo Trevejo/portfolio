@@ -15,14 +15,20 @@ const otherYears = years.filter((y) => y !== initialYear);
   data-years={JSON.stringify(years)}
   style={`--year-count: ${years.length};`}
 >
-  <button class="current-year-button" data-toggle type="button" aria-expanded="false">
+  <button
+    class="current-year-button"
+    data-toggle
+    type="button"
+    aria-expanded="false"
+    aria-haspopup="listbox"
+  >
     <span class="current-year" data-current>{initialYear}</span>
     <span class="arrow" data-arrow>▾</span>
   </button>
-  <ul class="other-years" data-list>
+  <ul class="other-years" data-list role="listbox">
     {
       otherYears.map((y) => (
-        <li>
+        <li role="option">
           <button class="other-year" data-year={y} type="button">
             {y}
           </button>
@@ -37,12 +43,15 @@ const otherYears = years.filter((y) => y !== initialYear);
     document
       .querySelectorAll<HTMLElement>("[data-year-selector-mobile]")
       .forEach((root) => {
+        if (root.dataset.bound === "true") return;
         const years: number[] = JSON.parse(root.dataset.years || "[]");
         const toggle = root.querySelector<HTMLButtonElement>("[data-toggle]");
         const currentEl = root.querySelector<HTMLElement>("[data-current]");
         const arrow = root.querySelector<HTMLElement>("[data-arrow]");
         const list = root.querySelector<HTMLElement>("[data-list]");
         if (!toggle || !currentEl || !arrow || !list) return;
+
+        root.dataset.bound = "true";
 
         const buttonHeight = 45;
         const animDuration = 150;
@@ -90,6 +99,8 @@ const otherYears = years.filter((y) => y !== initialYear);
   } else {
     initMobile();
   }
+
+  document.addEventListener("astro:page-load", initMobile);
 </script>
 
 <style lang="scss">

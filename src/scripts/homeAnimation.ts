@@ -29,71 +29,77 @@ function runHomeAnimation(): void {
     return;
   }
 
-  const apply = (): void => {
-    const doorWidth = isMobile() ? 75 : 200;
+  const doorWidth = isMobile() ? 75 : 200;
 
-    wordHello.style.transform = "translateY(60px)";
-    wordThere.style.transform = "translateY(60px)";
+  wordHello.style.transform = "translateY(60px)";
+  wordThere.style.transform = "translateY(60px)";
 
-    const timeline = anime.timeline({
-      easing: "easeInOutSine",
-      duration: 500,
-    });
+  const timeline = anime.timeline({
+    easing: "easeInOutSine",
+    duration: 500,
+  });
 
-    timeline.add({
-      targets: doorLeft,
-      width: `${doorWidth}px`,
-    });
+  timeline.add({
+    targets: doorLeft,
+    width: `${doorWidth}px`,
+  });
 
-    timeline.add({
-      targets: doorLeft,
-      height: "15px",
-      duration: 300,
-      begin: () => {
-        doorLeft.style.border = "1px solid var(--black)";
-      },
-    });
+  timeline.add({
+    targets: doorLeft,
+    height: "15px",
+    duration: 300,
+    begin: () => {
+      doorLeft.style.border = "1px solid var(--black)";
+    },
+  });
 
-    timeline.add({
-      targets: wordHello,
-      translateY: 0,
-    });
+  timeline.add({
+    targets: wordHello,
+    translateY: 0,
+  });
 
-    timeline.add({
-      targets: doorRight,
-      width: `${doorWidth}px`,
-    });
+  timeline.add({
+    targets: doorRight,
+    width: `${doorWidth}px`,
+  });
 
-    timeline.add({
-      targets: doorRight,
-      height: "15px",
-      duration: 300,
-      begin: () => {
-        doorRight.style.border = "1px solid var(--black)";
-      },
-    });
+  timeline.add({
+    targets: doorRight,
+    height: "15px",
+    duration: 300,
+    begin: () => {
+      doorRight.style.border = "1px solid var(--black)";
+    },
+  });
 
-    timeline.add({
-      targets: wordThere,
-      translateY: 0,
-    });
+  timeline.add({
+    targets: wordThere,
+    translateY: 0,
+  });
 
-    timeline.add({
-      targets: [doorLeft, doorRight],
-      height: "0px",
-      delay: 200,
-      complete: () => {
-        doorLeft.style.border = "none";
-        doorRight.style.border = "none";
-      },
-    });
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", apply, { once: true });
-  } else {
-    apply();
-  }
+  timeline.add({
+    targets: [doorLeft, doorRight],
+    height: "0px",
+    delay: 200,
+    complete: () => {
+      doorLeft.style.border = "none";
+      doorRight.style.border = "none";
+    },
+  });
 }
+
+let booted = false;
+
+function boot(): void {
+  if (booted) {
+    runHomeAnimation();
+    return;
+  }
+  booted = true;
+  runHomeAnimation();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+document.addEventListener("astro:page-load", boot);
 
 export default runHomeAnimation;

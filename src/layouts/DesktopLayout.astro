@@ -14,9 +14,9 @@ const { currentPath, pageName, pageId } = Astro.props;
 <div class="desktop-layout">
   <div class="desktop-grid">
     <LeftMenu currentPath={currentPath} />
-    <main class="desktop-main">
+    <div class="desktop-main">
       <slot />
-    </main>
+    </div>
     <RightPageInfo text={pageName} id={pageId} />
   </div>
   <Footer />

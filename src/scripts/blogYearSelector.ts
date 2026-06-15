@@ -44,27 +44,39 @@ function setLoading(content: HTMLElement, loading: boolean): void {
   }
 }
 
-export function initBlogYearSelector(): void {
-  document.addEventListener("blog:yearChange", async (ev) => {
-    const detail = (ev as CustomEvent<{ year: number }>).detail;
-    if (!detail || typeof detail.year !== "number") return;
-    const year = detail.year;
-    const content = document.getElementById("blog-content");
-    if (!content) return;
+async function onYearChange(ev: Event): Promise<void> {
+  const detail = (ev as CustomEvent<{ year: number }>).detail;
+  if (!detail || typeof detail.year !== "number") return;
+  const year = detail.year;
+  const content = document.getElementById("blog-content");
+  if (!content) return;
 
-    setLoading(content, true);
-    try {
-      const url = `${BASE}/blog/posts-${year}.json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as { posts: PostDTO[]; year: number };
-      content.innerHTML = buildHtml(data.posts, data.year);
-    } catch (err) {
-      console.error("[blog] failed to load year posts", err);
-    } finally {
-      setLoading(content, false);
-    }
-  });
+  setLoading(content, true);
+  try {
+    const url = `${BASE}/blog/posts-${year}.json`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = (await res.json()) as { posts: PostDTO[]; year: number };
+    content.innerHTML = buildHtml(data.posts, data.year);
+  } catch (err) {
+    console.error("[blog] failed to load year posts", err);
+  } finally {
+    setLoading(content, false);
+  }
 }
 
-initBlogYearSelector();
+function init(): void {
+  if (!(window as unknown as Record<string, unknown>).__blogYearSelectorBooted) {
+    (window as unknown as Record<string, unknown>).__blogYearSelectorBooted = true;
+  }
+  document.removeEventListener("blog:yearChange", onYearChange);
+  document.addEventListener("blog:yearChange", onYearChange);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
+
+document.addEventListener("astro:page-load", init);

@@ -156,14 +156,14 @@ function setupTimeline(root: HTMLElement): void {
 }
 
 function init(): void {
-  if (document.documentElement.hasAttribute("data-work-modal-time-init")) {
-    return;
-  }
-  document.documentElement.setAttribute("data-work-modal-time-init", "");
-
   document
     .querySelectorAll<HTMLElement>("[data-work-modal-time]")
-    .forEach(setupTimeline);
+    .forEach((root) => {
+      delete root.dataset.timelineSetup;
+      delete root.dataset.animated;
+      root.removeAttribute("data-state");
+      setupTimeline(root);
+    });
 }
 
 if (document.readyState === "loading") {
@@ -171,5 +171,7 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+
+document.addEventListener("astro:page-load", init);
 
 export {};

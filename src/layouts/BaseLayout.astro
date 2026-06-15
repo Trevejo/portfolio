@@ -1,5 +1,6 @@
 ---
 import "../styles/global.scss";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -13,8 +14,10 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <ClientRouter />
     <script is:inline>
       (function () {
         try {
@@ -28,6 +31,9 @@ const { title, description } = Astro.props;
     </script>
   </head>
   <body>
-    <slot />
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
   </body>
 </html>
